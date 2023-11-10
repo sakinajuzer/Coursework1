@@ -27,10 +27,10 @@
             </div>
         </div>
         <div style="display: flex; height: 100vh; width: 100%; background-color:black;">
-            <div class="filter" style="width: 20%; height: 100%; background-color: #dad7ca; ">
-            
+            <div class="filter" style="width: 20%; height: 100%; background-color: #dad7ca; overflow: auto;">
+                <div style="padding: 2%;"> <p>Hello</p> </div>
             </div> 
-            <div class="products" style="width: 80%; height:100%; background-color: #dad7ca;">
+            <div class="products" style="width: 80%; height:100%; background-color: #dad7ca; overflow: auto;">
                 <div>
                     <header>
                         <h1 v-text="sitename" style="text-align: center; padding-bottom: 10px;"></h1>
@@ -41,32 +41,83 @@
                         </button> -->
                     </header>
                     <main>
-                        <div class="productblock" style="background-color: #a3b18a; padding-top: 10px; width: fit-content; margin: 2%; padding: 1%; border-radius: 2%;">
-                            <div v-if="showProduct" style="padding-left: 15px;">
+                        <div class="productblock" style="padding-top: 10px; ">
+                            <div v-if="showProduct" style="padding-left: 15px; display: flex; flex-wrap: wrap;">
+                                <div v-for="product in products" style="margin: 2%; background-color: #a3b18a; padding: 2%; border-radius: 2%; width: 20%;">
                                 <figure>
                                     <img v-bind:src="product.image" height="100px" width="100px">
                                 </figure>
                                 <h2 v-text="product.title"></h2>
-                                <p v-html="product.description"></p>
+                                <p v-text="product.description" ></p>
                                 <p>Price: {{product.price}} </p>
-                                <p>Available Inventory: {{inventoryCount}}</p>
+                                <p>Available Inventory: {{product.availableInventory}}</p>
                                 <!-- vue v-show by default takes true values -->
                                 <!-- <button v-on:click = "addToCart" v-show="canAddToCart">
                                     Add to cart
                                 </button> -->
                                 <!-- This button will be displayed when canAddToCart is true -->
                                 <br>
-                                <button v-on:click="addToCart" v-if="canAddToCart">
+                                <button v-on:click="addToCart(product)" v-if="canAddToCart(product)">
                                     Add to Cart
                                 </button>
                                 <!-- This button will be displayed if it is false -->
                                 <button disabled="disabled" v-else>
                                     Add to Cart
                                 </button>
+                                <span v-if='product.availableInventory === cartCount(product.id)'>All out!</span>
+                                <span v-else-if="product.availableInventory - cartCount(product.id)<5">
+                                    Only {{product.availableInventory - cartCount(product.id)}} left!
+                                </span><span v-else>Buy now!</span>
+                                <div style="padding-left: 15px;">
+                                    <span v-for="n in product.rating">★</span>
+                                    <span v-for="n in 5-product.rating">☆</span>
+                                </div>
+                                </div>
                             </div>
-                            <div style="padding-left: 15px;">
-                                <span v-for="n in product.rating">★</span>
-                                <span v-for="n in 5-product.rating">☆</span>
+                            <div v-else>
+                                <h2>Checkout</h2>
+                                <p>
+                                    <strong>First Name: </strong>
+                                    <!-- this input field is bound to firstname in the order object -->
+                                    <input v-model.trim = "order.firstName"/>
+                                </p>
+                                <p>
+                                    <strong>Last Name: </strong>
+                                    <!-- this input field is bound to lastname in the order object -->
+                                    <input v-model.trim = "order.lastName">
+                                </p>
+                                <p><strong>Address: </strong> <input v-model = "order.address"></p>
+                                <p><strong>City: </strong> <input v-model = "order.city"></p>
+                                <p>
+                                    <strong>State: </strong>
+                                    <select v-model = "order.state">
+                                        <option disabled value="">State</option>
+                                        <option v-for="(state,key) in states" v-bind:value="state">{{key}}</option>
+                                        <!-- <option v-bind:value="states.AL">AL</option>
+                                        <option v-bind:value="states.AR">AR</option>
+                                        <option v-bind:value="states.CA">CA</option>
+                                        <option v-bind:value="states.NV">NV</option> -->
+                                    </select>
+                                </p>
+                                <p><strong>Zip/Postal Code: </strong> <input v-model.number = "order.zip" type="number"></p>
+                                <p><input type="checkbox" id="gift" value="true" v-model="order.gift" v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift">
+                                    <label for="gift">Ship as Gift?</label>
+                                </p>
+                                <p><input type="radio" id="home" value="Home" v-model="order.method">
+                                    <label for="home">Home</label>
+                                    <input type="radio" id="business" value="Business" v-model="order.method">
+                                    <label for="business">Business</label>
+                                </p>
+                                <h2>Order Information</h2>
+                                <p>First Name: {{order.firstName}}</p>
+                                <p>Last Name: {{order.lastName}}</p>
+                                <p>Address: {{order.address}}</p>
+                                <p>City: {{order.city}}</p>
+                                <p>State: {{order.state}}</p>
+                                <p>Zip/Postal Code: {{order.zip}}</p>
+                                <p>Gift:{{order.gift}}</p>
+                                <p>Method: {{order.method}}</p>
+                                <button v-on:click="submitForm">Place Order</button>
                             </div>
                         </div>
                 </div>
@@ -96,15 +147,7 @@
                 sendGift:"send as gift",
                 dontSendGift: "dont send as a gift"
             },
-            product: {
-                id: 1001,
-                title: "Crochet Classes",
-                description: "",
-                price: 2000,
-                image: "./images/crochet.jpeg",
-                availableInventory: 5,
-                rating: 3
-            },
+            products: products,
             states:{
                 AL:'Alabama',
                 AR:'Arizona',
@@ -118,6 +161,9 @@
                 this.cart.push(this.product.id);
                 // this.product.availableInventory--;
             },
+            canAddToCart: function (product) {
+                    return product.availableInventory > this.cartCount(product.id);
+                },
             showCheckout: function () {
                 // ? is a ternery operator
                 // ? helps shifting between pages works like the toggle button when true it will be product page and 
@@ -128,17 +174,32 @@
             submitForm: function(){
                 alert("Order Submitted!!!!")
             },
-            Hello: function(){
-                alert('Hello')
-            }
+            cartCount(id){
+                    let count = 0;
+                    for (let i=0; i< this.cart.length; i++){
+                        if (this.cart[i] === id){
+                            count++
+                        }
+                    }
+                    return count;
+                }
         },
         computed: {
             cartItemCount: function () {
                 return this.cart.length || " ";
             },
-            canAddToCart: function () {
-                return this.product.availableInventory > this.cartItemCount;
-            }, 
+            sortedProducts(){
+                    let productsArray = this.products.slice(0);
+                    function compare(a, b) {
+                        if (a.price > b.price)
+                            return 1;
+                        
+                        if (a.price < b.price)
+                            return -1;
+                        return 0;
+                    }
+                        return productsArray.sort(compare);
+            },
             inventoryCount: function() {
                 return this.product.availableInventory - this.cartItemCount;
             }
