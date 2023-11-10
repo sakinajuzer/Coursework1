@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+        integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <title>Document</title>
+    <script src="products.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="navbar">
+            <div class="name">
+                <p>BRAIN EXCERSICE</p>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search">
+                <button>Search</button>
+            </div>
+            <div class="carticon" v-on:click="showCheckout">
+                <p>{{cartItemCount}}</p>
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+        <div style="display: flex; height: 100vh; width: 100%; background-color:black;">
+            <div class="filter" style="width: 20%; height: 100%; background-color: #dad7ca; ">
+            
+            </div> 
+            <div class="products" style="width: 80%; height:100%; background-color: #dad7ca;">
+                <div>
+                    <header>
+                        <h1 v-text="sitename" style="text-align: center; padding-bottom: 10px;"></h1>
+            
+                        <!-- <button v-on:click="showCheckout"> -->
+                            <!-- {{cartItemCount}} -->
+                            <!-- <span class="fas fa-cart-arrow-down"></span> Checkout
+                        </button> -->
+                    </header>
+                    <main>
+                        <div class="productblock" style="background-color: #a3b18a; padding-top: 10px; width: fit-content; margin: 2%; padding: 1%; border-radius: 2%;">
+                            <div v-if="showProduct" style="padding-left: 15px;">
+                                <figure>
+                                    <img v-bind:src="product.image" height="100px" width="100px">
+                                </figure>
+                                <h2 v-text="product.title"></h2>
+                                <p v-html="product.description"></p>
+                                <p>Price: {{product.price}} </p>
+                                <p>Available Inventory: {{inventoryCount}}</p>
+                                <!-- vue v-show by default takes true values -->
+                                <!-- <button v-on:click = "addToCart" v-show="canAddToCart">
+                                    Add to cart
+                                </button> -->
+                                <!-- This button will be displayed when canAddToCart is true -->
+                                <br>
+                                <button v-on:click="addToCart" v-if="canAddToCart">
+                                    Add to Cart
+                                </button>
+                                <!-- This button will be displayed if it is false -->
+                                <button disabled="disabled" v-else>
+                                    Add to Cart
+                                </button>
+                            </div>
+                            <div style="padding-left: 15px;">
+                                <span v-for="n in product.rating">★</span>
+                                <span v-for="n in 5-product.rating">☆</span>
+                            </div>
+                        </div>
+                </div>
+             </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    // new Vue is the constructor
+    // ({ option object goes here })
+    // option objects are all the pre defined keys like el, data and methods and it is written as JSON
+    let webstore = new Vue({
+        // specifies the Document Object Model (DOM)
+        el: "#app",
+        data: {
+            showProduct: true,
+            sitename: "COURSES",
+            order: {
+                firstName: "",
+                lastName: "", 
+                address: "",
+                city: "",
+                zip: "",
+                state: "",
+                method:'Home',
+                gift: false,
+                sendGift:"send as gift",
+                dontSendGift: "dont send as a gift"
+            },
+            product: {
+                id: 1001,
+                title: "Crochet Classes",
+                description: "",
+                price: 2000,
+                image: "./images/crochet.jpeg",
+                availableInventory: 5,
+                rating: 3
+            },
+            states:{
+                AL:'Alabama',
+                AR:'Arizona',
+                CA:'California',
+                NV:'Nevada'
+            },
+            cart: []
+        },
+        methods: {
+            addToCart: function() {
+                this.cart.push(this.product.id);
+                // this.product.availableInventory--;
+            },
+            showCheckout: function () {
+                // ? is a ternery operator
+                // ? helps shifting between pages works like the toggle button when true it will be product page and 
+                // when false it will be checkout page
+                // alert('EHllo')
+                this.showProduct = this.showProduct ? false : true;
+            },
+            submitForm: function(){
+                alert("Order Submitted!!!!")
+            },
+            Hello: function(){
+                alert('Hello')
+            }
+        },
+        computed: {
+            cartItemCount: function () {
+                return this.cart.length || " ";
+            },
+            canAddToCart: function () {
+                return this.product.availableInventory > this.cartItemCount;
+            }, 
+            inventoryCount: function() {
+                return this.product.availableInventory - this.cartItemCount;
+            }
+        }
+    });
+     
+</script>
+<script>
+    function hello(){
+        alert('HEllo')
+    }
+</script>
+</html>
