@@ -32,6 +32,17 @@
         <div style="display: flex; height: 100vh; width: 100%; background-color:black;">
             <div class="filter" style="width: 20%; height: 100%; background-color: #dad7ca; overflow: auto; padding: 2%;">
                 <p>Sort BY: </p>
+                <label v-model="sort">
+                    <input type="radio" value="price">Price
+                    <br>
+                    <input type="radio" value="location">location
+                    <br>
+                    <input type="radio" value="availability">availability
+                    <br>
+                    <input type="radio" value="subject">Subject
+                </label>
+                <br>
+                <button type="submit">Apply Sort</button>
             </div> 
             <div class="products" style="width: 80%; height:100%; background-color: #dad7ca; overflow: auto; padding: 2%;">
                 <div>
@@ -131,17 +142,6 @@
                                     </p>
                                     <button v-on:click="placeOrder" style="justify-content: center;">Place Order</button>
                                 </div>
-                                <!-- <div v-if="orderPlaced">
-                                    <h2>Order Information</h2>
-                                    <p>First Name: {{order.firstName}}</p>
-                                    <p>Last Name: {{order.lastName}}</p>
-                                    <p>Address: {{order.address}}</p>
-                                    <p>City: {{order.city}}</p>
-                                    <p>State: {{order.state}}</p>
-                                    <p>Zip/Postal Code: {{order.zip}}</p>
-                                    <p>Gift:{{order.gift}}</p>
-                                    <p>Method: {{order.method}}</p>
-                                </div> -->
                             </div>
                             
                         </div>
@@ -158,6 +158,7 @@
             orderPlaced: false,
             showProduct: true,
             sitename: "COURSES",
+            sort: '',
             order: {
                 firstName: "",
                 lastName: "", 
