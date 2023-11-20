@@ -41,7 +41,7 @@
                         <br>
                         <input type="radio" value="location" v-model="sort">Location
                         <br>
-                        <input type="radio" value="availability" v-model="sort">availability
+                        <input type="radio" value="availability" v-model="sort">Availability
                         <br>
                         <input type="radio" value="title" v-model="sort">Title
                     </label>
@@ -67,7 +67,7 @@
                                 <p>First Name: {{order.firstName}}</p>
                                 <p>Last Name: {{order.lastName}}</p>
                                 <p>Number: {{order.number}}</p>
-                                <button v-on:click="placeOrder">Go back</button>
+                                <button class="addtocart" v-on:click="placeOrder">Go back</button>
                             </div>
                             <div v-else-if="showProduct" style="padding-left: 15px; display: flex; flex-wrap: wrap;">
                                 <div v-if="search!==''" v-for="product in searching"
@@ -136,7 +136,7 @@
                                         <p>Price: AED {{product.price}} </p>
                                         <br>
                                         <p>Quantity: {{cartCount(product.id)}}</p>
-                                        <button v-on:click="removeProduct(product.id)">remove</button>
+                                        <button class="addtocart" v-on:click="removeProduct(product.id)">Remove One</button>
                                     </div>
                                 </div>
                                 <div class="checkout"
@@ -145,19 +145,19 @@
                                     <p>
                                         <strong>First Name: </strong>
                                         <!-- this input field is bound to firstname in the order object -->
-                                        <input v-model.trim="order.firstName" />
+                                        <input v-model.trim="order.firstName" type="text" />
                                     </p>
                                     <p>
                                         <strong>Last Name: </strong>
                                         <!-- this input field is bound to lastname in the order object -->
-                                        <input v-model.trim="order.lastName">
+                                        <input v-model.trim="order.lastName" type="text">
                                     </p>
                                     <p>
                                         <strong>Number: </strong>
                                         <!-- this input field is bound to lastname in the order object -->
-                                        <input v-model.trim="order.number">
+                                        <input v-model.trim="order.number" type="number">
                                     </p>
-                                    <button v-if="NameandPhoneValid" v-on:click="placeOrder"
+                                    <button class="addtocart" v-if="NameandPhoneValid" v-on:click="placeOrder"
                                         style="justify-content: center;">Place Order</button>
                                     <button v-else disabled="disabled" style="justify-content: center;">Place
                                         Order</button>
@@ -177,7 +177,7 @@
             orderPlaced: false,
             showProduct: true,
             sitename: "Classes",
-            sort: 'title',
+            sort: '',
             sortOrder: 'ascending',
             search: '',
             order: {
@@ -333,6 +333,8 @@
                         return 0;
                     }
                     return productsArray.sort(compare).reverse();
+                } else {
+                    return productsArray;
                 }
             },
             cartProducts() {
@@ -355,7 +357,8 @@
             },
             searching: function () {
                 searchCourse = this.search.toLowerCase();
-                return products.filter(product => product.title.toLowerCase().includes(searchCourse));
+                return products.filter(product => product.title.toLowerCase().includes(searchCourse) || 
+                product.description.toLowerCase().includes(searchCourse) || product.location.toLowerCase().includes(searchCourse));
             },
             NameandPhoneValid: function () {
                 return /^[A-Za-z\s]+$/.test(this.order.firstName) && /^[A-Za-z\s]+$/.test(this.order.lastName)

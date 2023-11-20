@@ -25,7 +25,7 @@ let products = [
         price: 400,
         image: "images/horse.jpg",
         availableInventory: 10,
-        location: "Jabal Ali"
+        location: "Ajman"
 
     },
     {
@@ -63,7 +63,7 @@ let products = [
         price: 350,
         image: "images/potterymaking.avif",
         availableInventory: 10,
-        location: "Al Qouz"
+        location: "Ajman"
     },
     {
         id: 1008,
